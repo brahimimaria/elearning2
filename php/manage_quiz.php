@@ -92,6 +92,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_question'])) {
     }
 }
 
+// Traitement : Modifier une question et ses réponses
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_question'])) {
+    $question_id = (int)$_POST['question_id'];
+    $new_text = $conn->real_escape_string(trim($_POST['question_text'] ?? ''));
+    if ($new_text === '') {
+        $message = 'La question ne peut pas être vide.';
+        $message_type = 'error';
+    } else {
+        $conn->query("UPDATE quiz_questions SET question_text='$new_text' WHERE id=$question_id AND evaluation_id=$quiz_id");
+        $conn->query("DELETE FROM quiz_answers WHERE question_id=$question_id");
+        if (isset($_POST['answers']) && is_array($_POST['answers'])) {
+            $correct_answer = isset($_POST['correct_answer']) ? (int)$_POST['correct_answer'] : -1;
+            $order = 1;
+            foreach ($_POST['answers'] as $idx => $answer_text) {
+                $answer_text = trim($answer_text);
+                if ($answer_text !== '') {
+                    $esc = $conn->real_escape_string($answer_text);
+                    $is_correct = ($idx === $correct_answer) ? 1 : 0;
+                    $conn->query("INSERT INTO quiz_answers (question_id, answer_text, is_correct, answer_order) VALUES ($question_id, '$esc', $is_correct, $order)");
+                    $order++;
+                }
+            }
+        }
+        $message = 'Question mise à jour.';
+        $message_type = 'success';
+    }
+}
+
 // Traitement : Supprimer une question
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_question'])) {
     $question_id = (int)$_POST['question_id'];
@@ -474,6 +502,33 @@ foreach ($questions as &$q) {
                                 </div>
                             <?php endforeach; ?>
                         </div>
+
+                        <details>
+                            <summary style="cursor:pointer;margin-bottom:.5rem"><strong>Modifier la question</strong></summary>
+                            <form method="POST" style="margin-top:.5rem">
+                                <input type="hidden" name="question_id" value="<?php echo (int)$question['id']; ?>">
+                                <div class="form-group">
+                                    <label>Énoncé</label>
+                                    <textarea name="question_text" required><?php echo htmlspecialchars($question['question_text']); ?></textarea>
+                                </div>
+                                <div class="answers-section">
+                                    <h3 style="margin-bottom: 1rem; color: #2d3748;">Options de réponse</h3>
+                                    <div id="edit-answers-<?php echo (int)$question['id']; ?>">
+                                        <?php foreach ($question['answers'] as $i => $answer): ?>
+                                            <div class="answer-item">
+                                                <input type="radio" name="correct_answer" value="<?php echo $i; ?>" <?php echo $answer['is_correct'] ? 'checked' : ''; ?>>
+                                                <input type="text" name="answers[]" value="<?php echo htmlspecialchars($answer['answer_text']); ?>" placeholder="Option <?php echo $i+1; ?>">
+                                                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Supprimer</button>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" onclick="addEditAnswerField(<?php echo (int)$question['id']; ?>)">Ajouter une option</button>
+                                </div>
+                                <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1rem">
+                                    <button class="btn btn-primary" name="update_question"><i class="fas fa-save"></i> Enregistrer</button>
+                                </div>
+                            </form>
+                        </details>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -523,6 +578,19 @@ function addAnswerField() {
         </button>
     `;
     container.appendChild(newItem);
+}
+
+function addEditAnswerField(qid) {
+    const container = document.getElementById('edit-answers-' + qid);
+    const count = container.querySelectorAll('.answer-item').length;
+    const div = document.createElement('div');
+    div.className = 'answer-item';
+    div.innerHTML = `
+        <input type="radio" name="correct_answer" value="\${count}">
+        <input type="text" name="answers[]" placeholder="Option \${count + 1}">
+        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Supprimer</button>
+    `;
+    container.appendChild(div);
 }
 </script>
 

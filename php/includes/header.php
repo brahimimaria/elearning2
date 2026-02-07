@@ -17,6 +17,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                     <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'instructor'): ?>
                         <li><a href="<?php echo $is_php_folder ? 'teacher_courses.php' : 'php/teacher_courses.php'; ?>" class="button"><i class="fas fa-book"></i> Mes Cours</a></li>
                         <li><a href="<?php echo $is_php_folder ? 'forum.php' : 'php/forum.php'; ?>" class="button"><i class="fas fa-comments"></i> Forum</a></li>
+                        <li><a href="<?php echo $is_php_folder ? 'teacher_quiz.php' : 'php/teacher_quiz.php'; ?>" class="button"><i class="fas fa-circle-question"></i> Quiz</a></li>
                     <?php endif; ?>
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                         <li><a href="<?php echo $is_php_folder ? 'admin_teachers.php' : 'php/admin_teachers.php'; ?>" class="button">Enseignants</a></li>

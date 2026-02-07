@@ -116,6 +116,9 @@ $is_php_folder = true;
                     <strong><?php echo htmlspecialchars($e['title']); ?></strong>
                     <?php if ($e['due_date']): ?> — Date limite : <?php echo date('d/m/Y', strtotime($e['due_date'])); endif; ?>
                     <?php if ($e['description']): ?><p><?php echo htmlspecialchars($e['description']); ?></p><?php endif; ?>
+                    <?php if ($can_access && $e['type'] === 'quiz'): ?>
+                        <p><a class="button" href="take_quiz.php?quiz_id=<?php echo (int)$e['id']; ?>"><i class="fas fa-circle-question"></i> Passer le quiz</a></p>
+                    <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
             </ul>

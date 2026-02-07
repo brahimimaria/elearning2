@@ -157,6 +157,10 @@ $evaluations_list = $evaluations->fetch_all(MYSQLI_ASSOC);
                     <li>
                         <strong><?php echo htmlspecialchars($ev['title']); ?></strong> 
                         (<?php echo htmlspecialchars($ev['type']); ?>) — <?php echo htmlspecialchars($ev['course_title']); ?>
+                        <?php if ($ev['type'] === 'quiz'): ?>
+                            <a class="btn btn-primary" href="manage_quiz.php?quiz_id=<?php echo (int)$ev['id']; ?>" style="margin-left:.5rem">Gérer le quiz</a>
+                            <a class="btn" href="quiz_results.php?quiz_id=<?php echo (int)$ev['id']; ?>" style="margin-left:.25rem;background:#10b981;color:#fff">Résultats</a>
+                        <?php endif; ?>
                         <form method="POST" style="display:inline">
                             <input type="hidden" name="evaluation_id" value="<?php echo $ev['id']; ?>">
                             <button class="btn btn-danger" name="delete_evaluation" onclick="return confirm('Supprimer?')">Supprimer</button>

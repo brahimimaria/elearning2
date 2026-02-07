@@ -76,7 +76,7 @@ header h1 {
     background-clip: linear-gradient(120deg, #ffffff 0%, #e2e8f0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.658);
 }
 
 header nav ul {
@@ -111,7 +111,7 @@ main {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
+   
 }
 
 h2 {
